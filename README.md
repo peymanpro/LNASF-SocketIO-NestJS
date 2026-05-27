@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Socket.IO NestJS Public Chatroom
 
 A real-time chatroom backend built with NestJS and Socket.IO.
@@ -31,3 +32,6 @@ user-typing	{ username, isTyping }
 online-users	[username1, username2]
 
 
+=======
+# socketio-nestjs-public-chatroom
+>>>>>>> 6f1b2b6005a39db1d5f5ef7697cfa3f4d16c33d5
