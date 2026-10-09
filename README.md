@@ -51,7 +51,7 @@ Only configure trusted origins in a deployed environment. CORS is not authentica
 | Server → client | `welcome` | `{ message, users: string[] }` |
 | Server → client | `user-joined` | `{ username, message, time }` |
 | Server → client | `user-left` | `{ username, message, time }` |
-| Server → client | `new-message` | `{ username, message, time, id }` |
+| Server → client | `new-message` | `{ username, message, time, id, senderId }` |
 | Server → client | `online-users` | `string[]` |
 | Server → client | `user-typing` | `{ username, isTyping }` |
 | Server → client | `chat-error` | `{ code, message }` |
