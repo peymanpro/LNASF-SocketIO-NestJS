@@ -1,4 +1,4 @@
-import { Injectable } from "@nestjs/common";
+import { Inject, Injectable, Optional } from "@nestjs/common";
 
 export type LearningMode = "passive" | "advisory" | "adaptive";
 
@@ -100,8 +100,8 @@ export class TypingAdaptationService {
   private readonly counters = { typingStartReceived: 0, typingStartBroadcast: 0, typingStartSuppressed: 0, typingStopBroadcast: 0 };
   private lastDecision: TypingDecision | null = null;
 
-  constructor() {
-    this.mode = normalizeLearningMode(process.env.LNASF_MODE);
+  constructor(@Optional() @Inject("LNASF_MODE") mode?: string) {
+    this.mode = normalizeLearningMode(mode ?? process.env.LNASF_MODE);
   }
 
   handleStart(socketId: string, nowMs = Date.now()): TypingDecision {
