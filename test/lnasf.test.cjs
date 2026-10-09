@@ -16,24 +16,17 @@ test("the model learns gap frequency and emits an explainable prediction", () =>
   });
 });
 
-test("passive mode learns but always broadcasts starts", () => {
+test("passive mode learns but never suppresses runtime typing-start events", () => {
   const service = new TypingAdaptationService("passive");
-  const passive = decideTypingStart({
-    mode: "passive",
-    prediction: { samples: 10, fastGapProbability: 0.9, confidence: 0.77, meanGapMs: 90 },
-    isTyping: true,
-    sinceLastBroadcastMs: 50,
-  });
-  assert.equal(passive.action, "broadcast");
-  assert.equal(passive.recommendation, "suppress-duplicate");
-  for (let index = 0; index < 8; index += 1) service.handleStart("socket-passive", index * 100);
-  for (let index = 0; index < 6; index += 1) service.handleStart("socket-adaptive", index * 100);
-  const actualDecision = service.handleStart("socket-adaptive", 600);
-  assert.equal(actualDecision.broadcast, false);
-  assert.equal(service.getSnapshot().measurement.typingStartSuppressed, 1);
+  for (let index = 0; index < 8; index += 1) {
+    assert.equal(service.handleStart("socket-passive", index * 100).broadcast, true);
+  }
+  assert.equal(service.getSnapshot().mode, "passive");
+  assert.equal(service.getSnapshot().learning.gapSamples, 7);
+  assert.equal(service.getSnapshot().measurement.typingStartSuppressed, 0);
 });
 
-test("advisory mode recommends without authorizing an action", () => {
+test("advisory mode reports a recommendation without authorizing the action", () => {
   const decision = decideTypingStart({
     mode: "advisory",
     prediction: { samples: 8, fastGapProbability: 0.9, confidence: 8 / 11, meanGapMs: 100 },
@@ -44,23 +37,22 @@ test("advisory mode recommends without authorizing an action", () => {
   assert.equal(decision.recommendation, "suppress-duplicate");
 });
 
-test("adaptive mode falls back when evidence is insufficient and suppresses learned duplicate bursts", () => {
+test("adaptive mode falls back during cold start then suppresses a learned duplicate burst", () => {
   const service = new TypingAdaptationService("adaptive");
   const initial = decideTypingStart({ mode: "adaptive", prediction: null, isTyping: true, sinceLastBroadcastMs: 1 });
   assert.equal(initial.action, "broadcast");
-  const adaptive = decideTypingStart({
-    mode: "adaptive",
-    prediction: { samples: 5, fastGapProbability: 6 / 7, confidence: 5 / 8, meanGapMs: 100 },
-    isTyping: true,
-    sinceLastBroadcastMs: 50,
-  });
-  assert.equal(adaptive.action, "suppress");
-  assert.equal(adaptive.cooldownMs, 500);
-  assert.equal(service.getSnapshot().measurement.typingStartSuppressed, 0);
+
+  for (let index = 0; index < 6; index += 1) {
+    assert.equal(service.handleStart("socket-adaptive", index * 100).broadcast, true);
+  }
+  const learnedDecision = service.handleStart("socket-adaptive", 600);
+  assert.equal(learnedDecision.action, "suppress");
+  assert.equal(learnedDecision.broadcast, false);
+  assert.equal(service.getSnapshot().measurement.typingStartSuppressed, 1);
 });
 
 test("typing-stop always passes through and resets the per-socket observation window", () => {
-  const service = new TypingAdaptationService();
+  const service = new TypingAdaptationService("adaptive");
   service.handleStart("socket-a", 0);
   const stop = service.handleStop("socket-a");
   assert.equal(stop.broadcast, true);
