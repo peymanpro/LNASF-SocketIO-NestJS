@@ -11,6 +11,7 @@ import { randomUUID } from "node:crypto";
 import { Server, Socket } from "socket.io";
 import { getAllowedOrigins } from "./chat-config";
 import { normalizeMessage, normalizeUsername } from "./chat-validation";
+import { TypingAdaptationService } from "./lnasf/typing-adaptation";
 
 type ChatUser = { username: string; joinedAt: string };
 
@@ -25,6 +26,8 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
   @WebSocketServer()
   io: Server;
 
+  constructor(private readonly typingAdaptation: TypingAdaptationService) {}
+
   private readonly users = new Map<string, ChatUser>();
 
   handleConnection(socket: Socket) {
@@ -33,6 +36,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
   handleDisconnect(socket: Socket) {
     const user = this.users.get(socket.id);
+    this.typingAdaptation.remove(socket.id);
     if (!user) return;
 
     this.users.delete(socket.id);
@@ -131,7 +135,14 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
   private broadcastTyping(socket: Socket, isTyping: boolean) {
     const user = this.users.get(socket.id);
-    if (user) socket.broadcast.emit("user-typing", { username: user.username, isTyping });
+    if (!user) return;
+    if (!isTyping) {
+      this.typingAdaptation.handleStop(socket.id);
+      socket.broadcast.emit("user-typing", { username: user.username, isTyping: false });
+      return;
+    }
+    const decision = this.typingAdaptation.handleStart(socket.id);
+    if (decision.broadcast) socket.broadcast.emit("user-typing", { username: user.username, isTyping: true });
   }
 
   private sendOnlineUsers() {
