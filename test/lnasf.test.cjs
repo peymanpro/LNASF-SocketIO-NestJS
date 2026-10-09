@@ -17,8 +17,7 @@ test("the model learns gap frequency and emits an explainable prediction", () =>
 });
 
 test("passive mode learns but always broadcasts starts", () => {
-  const service = new TypingAdaptationService();
-  // Constructor mode follows the environment; pass decisions through the exported pure policy for stable mode testing.
+  const service = new TypingAdaptationService("passive");
   const passive = decideTypingStart({
     mode: "passive",
     prediction: { samples: 10, fastGapProbability: 0.9, confidence: 0.77, meanGapMs: 90 },
@@ -27,7 +26,11 @@ test("passive mode learns but always broadcasts starts", () => {
   });
   assert.equal(passive.action, "broadcast");
   assert.equal(passive.recommendation, "suppress-duplicate");
-  assert.ok(["passive", "advisory", "adaptive"].includes(service.mode));
+  for (let index = 0; index < 8; index += 1) service.handleStart("socket-passive", index * 100);
+  for (let index = 0; index < 6; index += 1) service.handleStart("socket-adaptive", index * 100);
+  const actualDecision = service.handleStart("socket-adaptive", 600);
+  assert.equal(actualDecision.broadcast, false);
+  assert.equal(service.getSnapshot().measurement.typingStartSuppressed, 1);
 });
 
 test("advisory mode recommends without authorizing an action", () => {
@@ -42,7 +45,7 @@ test("advisory mode recommends without authorizing an action", () => {
 });
 
 test("adaptive mode falls back when evidence is insufficient and suppresses learned duplicate bursts", () => {
-  const service = new TypingAdaptationService();
+  const service = new TypingAdaptationService("adaptive");
   const initial = decideTypingStart({ mode: "adaptive", prediction: null, isTyping: true, sinceLastBroadcastMs: 1 });
   assert.equal(initial.action, "broadcast");
   const adaptive = decideTypingStart({
