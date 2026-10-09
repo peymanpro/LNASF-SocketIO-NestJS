@@ -80,6 +80,14 @@ npm test
 
 The current automated tests cover validation boundaries. GitHub Actions compiles the NestJS application and runs those tests on pushes and pull requests.
 
+## LNASF: native typing-burst adaptation
+
+`src/lnasf/typing-adaptation.ts` implements the Observe–Learn–Predict–Decide–Adapt–Measure path using an in-process frequency model over inter-arrival gaps between typing-start events. The Gateway delegates the decision and only suppresses duplicate typing-start notifications; typing-stop, chat messages, and validation remain non-adaptive.
+
+Set `LNASF_MODE=passive` (default), `advisory`, or `adaptive` before starting the backend. Passive learns without changing delivery. Advisory reports a recommendation without applying it. Adaptive requires at least five learned gaps and confidence of at least 0.60 before applying a bounded 150–500 ms duplicate cooldown; insufficient evidence falls back to broadcasting. `GET /lnasf/metrics` exposes evidence, the current prediction and decision, and measured suppression counters. State is process-local and resets on restart.
+
+LNASF tests use deterministic timestamps and directly verify the model, policy separation, modes, and fallback. No performance gain is claimed without live multi-client benchmarking.
+
 ## Limitations
 
 Presence is held in process memory and is lost on restart. Multiple instances do not share presence; configure a compatible Socket.IO adapter before horizontal scaling. This project is a portfolio sample, not a secured production messaging service.
