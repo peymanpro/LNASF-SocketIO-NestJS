@@ -92,6 +92,10 @@ LNASF tests use deterministic timestamps and directly verify the model, policy s
 
 Framework context: [LNASF concept and architecture](https://github.com/peymanpro/learning-native-adaptive-software-framework) · [Technical specification](https://github.com/peymanpro/learning-native-adaptive-software-framework/blob/main/SPECIFICATION.md). This repository implements only the specific LNASF subset documented above; it is not a complete framework implementation.
 
+## Dependency audit status
+
+The non-blocking npm audit snapshot from 2026-10-09 reported 34 advisories (1 critical, 16 high, 13 moderate, 4 low). The report includes a critical transitive proxy-addr finding and findings in the current NestJS 10 and build-tool dependency lines; some recommended fixes imply a major NestJS migration. No automatic or force upgrade was applied. Treat this as a reference sample, not production security clearance, until the dependency path is triaged, upgraded and retested.
+
 ## Limitations
 
 Presence is held in process memory and is lost on restart. Multiple instances do not share presence; configure a compatible Socket.IO adapter before horizontal scaling. This project is a portfolio sample, not a secured production messaging service.
