@@ -88,6 +88,10 @@ Set `LNASF_MODE=passive` (default), `advisory`, or `adaptive` before starting th
 
 LNASF tests use deterministic timestamps and directly verify the model, policy separation, modes, and fallback. No performance gain is claimed without live multi-client benchmarking.
 
+
+
+Framework context: [LNASF concept and architecture](https://github.com/peymanpro/learning-native-adaptive-software-framework) · [Technical specification](https://github.com/peymanpro/learning-native-adaptive-software-framework/blob/main/SPECIFICATION.md). This repository implements only the specific LNASF subset documented above; it is not a complete framework implementation.
+
 ## Limitations
 
 Presence is held in process memory and is lost on restart. Multiple instances do not share presence; configure a compatible Socket.IO adapter before horizontal scaling. This project is a portfolio sample, not a secured production messaging service.
