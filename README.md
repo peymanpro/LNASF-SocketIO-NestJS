@@ -13,7 +13,7 @@ A small real-time public-chat backend built with NestJS, its WebSocket gateway a
 
 ## Requirements
 
-- Node.js 20 or later
+- Node.js 22.12 or later (matches the `engines` requirement in `package.json`)
 - npm
 
 ## Run locally
@@ -94,7 +94,7 @@ Framework context: [LNASF concept and architecture](https://github.com/peymanpro
 
 ## Dependency audit status
 
-The project is aligned on NestJS 12 and TypeScript 5.9, with the lockfile regenerated and validated by CI. The current audit summary is recorded in GitHub Actions after the dependency update; review the latest audit output before treating this project as production-ready. No `--force` dependency upgrade is used. An advisory count does not by itself prove runtime exploitability, but unresolved critical or high findings must be triaged before release.
+The project is aligned on NestJS 12 and TypeScript 6.0.3, with the lockfile regenerated and validated by CI. The latest verified audit snapshot reported zero npm findings ([workflow](https://github.com/peymanpro/socketio-nestjs/actions/runs/37994534363)). CI now fails when high or critical findings are present; lower-severity findings remain visible in the audit report. Re-run the audit before release because advisories change over time. No `--force` dependency upgrade is used, and a clean audit is not a blanket production-readiness guarantee.
 
 ## Limitations
 
