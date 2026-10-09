@@ -1,13 +1,14 @@
 {
   "name": "socketio-nestjs-public-chatroom",
   "version": "1.0.0",
-  "description": "Real-time chatroom backend built with NestJS and Socket.IO",
+  "description": "A validated real-time chat backend built with NestJS and Socket.IO",
   "main": "dist/main.js",
   "scripts": {
     "build": "nest build",
     "start": "nest start",
     "start:dev": "nest start --watch",
-    "start:prod": "node dist/main"
+    "start:prod": "node dist/main",
+    "test": "npm run build && node --test test/*.test.cjs"
   },
   "dependencies": {
     "@nestjs/common": "^10.0.0",
