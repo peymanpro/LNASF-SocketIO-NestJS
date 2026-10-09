@@ -115,6 +115,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
       message,
       time: new Date().toISOString(),
       id: randomUUID(),
+      senderId: socket.id,
     });
   }
 
