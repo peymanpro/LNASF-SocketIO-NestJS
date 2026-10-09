@@ -78,7 +78,7 @@ npm run build
 npm test
 ```
 
-The current automated tests cover validation boundaries. GitHub Actions compiles the NestJS application and runs those tests on pushes and pull requests.
+The automated suite covers validation boundaries, the native model and policy, Passive/Advisory/Adaptive behavior, fallback, and a live two-client Socket.IO integration test. The integration test boots the actual NestJS application on an ephemeral local port and verifies that Adaptive mode suppresses duplicate typing-start events without suppressing typing-stop or a primary chat message. It checks event delivery, not throughput or user-perceived latency. GitHub Actions builds the application and runs the suite on pushes and pull requests.
 
 ## LNASF: native typing-burst adaptation
 
