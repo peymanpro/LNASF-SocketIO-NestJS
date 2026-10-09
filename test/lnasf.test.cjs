@@ -58,3 +58,14 @@ test("typing-stop always passes through and resets the per-socket observation wi
   assert.equal(stop.broadcast, true);
   assert.equal(service.getSnapshot().measurement.typingStopBroadcast, 1);
 });
+
+test("adaptive service reduces duplicate broadcasts against passive baseline on the same trace", () => {
+  const passive = new TypingAdaptationService("passive");
+  const adaptive = new TypingAdaptationService("adaptive");
+  const events = Array.from({ length: 30 }, (_, index) => index * 100);
+  const passiveBroadcasts = events.filter((time) => passive.handleStart("same-trace", time).broadcast).length;
+  const adaptiveBroadcasts = events.filter((time) => adaptive.handleStart("same-trace", time).broadcast).length;
+  assert.equal(passiveBroadcasts, events.length);
+  assert.ok(adaptiveBroadcasts < passiveBroadcasts);
+  assert.ok(adaptive.getSnapshot().measurement.typingStartSuppressed > 0);
+});
