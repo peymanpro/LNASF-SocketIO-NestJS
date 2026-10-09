@@ -94,7 +94,7 @@ Framework context: [LNASF concept and architecture](https://github.com/peymanpro
 
 ## Dependency audit status
 
-The non-blocking npm audit snapshot from 2026-10-09 reported 34 advisories (1 critical, 16 high, 13 moderate, 4 low). The report includes a critical transitive proxy-addr finding and findings in the current NestJS 10 and build-tool dependency lines; some recommended fixes imply a major NestJS migration. No automatic or force upgrade was applied. Treat this as a reference sample, not production security clearance, until the dependency path is triaged, upgraded and retested.
+The project is aligned on NestJS 12 and TypeScript 5.9, with the lockfile regenerated and validated by CI. The current audit summary is recorded in GitHub Actions after the dependency update; review the latest audit output before treating this project as production-ready. No `--force` dependency upgrade is used. An advisory count does not by itself prove runtime exploitability, but unresolved critical or high findings must be triaged before release.
 
 ## Limitations
 
