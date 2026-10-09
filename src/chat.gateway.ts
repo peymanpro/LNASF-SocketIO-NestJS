@@ -24,7 +24,7 @@ type ChatUser = { username: string; joinedAt: string };
 })
 export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
   @WebSocketServer()
-  io: Server;
+  io!: Server;
 
   constructor(private readonly typingAdaptation: TypingAdaptationService) {}
 
